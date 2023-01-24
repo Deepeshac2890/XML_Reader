@@ -7,15 +7,26 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * The main function which needs to be run with the directory name set.
  */
 public class ReadXmlSaxParser {
 
-    private static final String DIR_NAME = "src";
     public static void main(String[] args) {
-        listFilesForFolder(new File(DIR_NAME));
+        System.out.println("Please enter the directory where you want to search : ");
+        Scanner sc = new Scanner(System.in);
+        String directory = sc.nextLine();
+        if (!directory.isEmpty()) {
+            try {
+                listFilesForFolder(new File(directory));
+            } catch (NullPointerException e) {
+                System.out.println("Entered directory is not valid. Please enter a valid directory path");
+            }
+        } else {
+            System.out.println("Empty directory path not allowed !!");
+        }
     }
 
 
@@ -34,6 +45,8 @@ public class ReadXmlSaxParser {
             // count elements name known as "staff"
             CountElementHandlerSax countStaffHandler =
                     new CountElementHandlerSax();
+            // To set the which Row's 1st cell contains the project Name.
+            countStaffHandler.setProjectNameRow(2);
             saxParser.parse(file.getPath(), countStaffHandler);
 
             System.out.println("The Project name : " + countStaffHandler.getProjectName());

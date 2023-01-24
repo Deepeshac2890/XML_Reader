@@ -14,6 +14,7 @@ public class CountElementHandlerSax extends DefaultHandler {
     private final List<Sheet> sheetList = new ArrayList<>();
     private Sheet sheet = new Sheet();
     private String projectName = "";
+    private int projectNameRow = 2;
 
     public String getProjectName() {
         return projectName;
@@ -21,6 +22,10 @@ public class CountElementHandlerSax extends DefaultHandler {
 
     public List<Sheet> getSheetList() {
         return sheetList;
+    }
+
+    public void setProjectNameRow(int rowNumber) {
+        projectNameRow = rowNumber;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class CountElementHandlerSax extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) {
-        if (currentSheetRowCount == 1 && sheetList.size() == 0 && encounteredData && projectName.isEmpty()) {
+        if (currentSheetRowCount == projectNameRow && sheetList.size() == 0 && encounteredData && projectName.isEmpty()) {
             projectName = String.copyValueOf(ch, start, length).trim();
             encounteredData = false;
         }
