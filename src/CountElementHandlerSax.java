@@ -14,10 +14,17 @@ public class CountElementHandlerSax extends DefaultHandler {
     private final List<Sheet> sheetList = new ArrayList<>();
     private Sheet sheet = new Sheet();
     private String projectName = "";
+    private String spId = "";
     private int projectNameRow = 2;
+
+    private int currentCellCount = 0;
 
     public String getProjectName() {
         return projectName;
+    }
+
+    public String getSpId() {
+        return spId;
     }
 
     public List<Sheet> getSheetList() {
@@ -37,10 +44,12 @@ public class CountElementHandlerSax extends DefaultHandler {
                 sheet.sheetName = attributes.getValue(attributes.getIndex("ss:Name"));
             }
             case "Row" -> {
+                currentCellCount = 0;
                 currentSheetRowCount++;
                 sheet.countOfRows = currentSheetRowCount;
             }
             case "Data" -> {
+                currentCellCount++;
                 encounteredData = true;
             }
         }
@@ -48,8 +57,14 @@ public class CountElementHandlerSax extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) {
-        if (currentSheetRowCount == projectNameRow && sheetList.size() == 0 && encounteredData && projectName.isEmpty()) {
-            projectName = String.copyValueOf(ch, start, length).trim();
+        if (currentSheetRowCount == projectNameRow && sheetList.size() == 0 && encounteredData) {
+            String value = String.copyValueOf(ch, start, length).trim();
+            if (currentCellCount == 2 && projectName.isEmpty()) {
+                projectName = value;
+            }
+            if (currentCellCount == 3 && spId.isEmpty()) {
+                spId = value;
+            }
             encounteredData = false;
         }
     }
